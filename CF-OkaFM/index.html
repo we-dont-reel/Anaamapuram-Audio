@@ -12,6 +12,12 @@
 html,body{margin:0;width:100%;height:100%;overflow:hidden}
 body{background:#fff}
 .page{width:100%;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.page{
+    background:
+        linear-gradient(to bottom,#17102b 0,#fff 100px,#fff calc(100% - 105px),#17102b 100%),
+        linear-gradient(to right,#17102b 0,#fff 30px,#fff calc(100% - 30px),#17102b 100%);
+    background-blend-mode:darken;
+}
 .logo{width:min(256px,80vw);height:auto;display:block}
 .continue-button{margin-top:28px;padding:13px 42px;background:#171A21;color:#fff;border:none;border-radius:999px;font-family:Arial,sans-serif;font-size:26px;font-weight:600;text-decoration:none;display:inline-block;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;outline:none}
 .continue-button:hover,.continue-button:focus,.continue-button:active{background:#171A21;color:#fff;text-decoration:none;outline:none;box-shadow:none}
