@@ -501,6 +501,10 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.addEventListener('pause', () => {
             navigator.mediaSession.playbackState = 'paused';
         });
+        
+        audio.addEventListener('ended', () => {
+            navigator.mediaSession.playbackState = 'none';
+        });
 
     }
 
