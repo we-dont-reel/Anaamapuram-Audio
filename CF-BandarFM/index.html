@@ -221,12 +221,12 @@
         .player-controls {
             position: fixed;
             left: 50%;
-            bottom: 5vh;
+            bottom: 8vh;
             transform: translateX(-50%);
             z-index: 20;
 
             display: grid;
-            grid-template-columns: 58px 82px 58px;
+            grid-template-columns: 50px 50px 50px;
             column-gap: 22px;
 
             justify-items: center;
@@ -234,9 +234,10 @@
         }
 
         .player-btn {
-            width: 58px;
-            height: 58px;
-
+            width: 50px;
+            height: 50px;
+            font-size: 17px;
+            
             border: none;
             border-radius: 50%;
 
@@ -248,16 +249,15 @@
             justify-content: center;
 
             cursor: pointer;
-            font-size: 20px;
-            
+                        
             -webkit-tap-highlight-color: transparent;
             tap-highlight-color: transparent;
         }
 
         .player-btn.play-btn {
-            width: 82px;
-            height: 82px;
-            font-size: 28px;
+            width: 50px;
+            height: 50px;
+            font-size: 17px;
         }
 
         /* Top row */
