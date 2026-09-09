@@ -145,7 +145,7 @@
             height: 100%;
             display: flex;
             align-items: flex-start;
-            padding-top: 15vh;
+            padding-top: 10vh;
             justify-content: center;
             padding-left: 25px;
             padding-right: 25px;
@@ -157,9 +157,6 @@
             text-align: center;
             background: rgba(255, 255, 255, 0.97);
             border-radius: 28px;
-            box-shadow:
-                0 30px 100px rgba(0, 0, 0, 0.55),
-                0 0 0 1px rgba(255, 255, 255, 0.5);
         }
 
         .radio-icon {
@@ -219,6 +216,66 @@
                 font-size: 17px;
             }
         }
+        
+        /* Bottom player controls */
+        .player-controls {
+            position: fixed;
+            left: 50%;
+            bottom: 5vh;
+            transform: translateX(-50%);
+            z-index: 20;
+
+            display: grid;
+            grid-template-columns: 58px 82px 58px;
+            column-gap: 22px;
+
+            justify-items: center;
+            align-items: center;
+        }
+
+        .player-btn {
+            width: 58px;
+            height: 58px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: #fff;
+            color: #111;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+            font-size: 20px;
+            
+            -webkit-tap-highlight-color: transparent;
+            tap-highlight-color: transparent;
+        }
+
+        .player-btn.play-btn {
+            width: 82px;
+            height: 82px;
+            font-size: 28px;
+        }
+
+        /* Top row */
+        #rewindBtn {
+            grid-column: 1;
+            grid-row: 1;
+        }
+
+        #playBtn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        #forwardBtn {
+            grid-column: 3;
+            grid-row: 1;
+        }
+        
     </style>
 </head>
 
@@ -250,9 +307,205 @@
             </p>
 
             <div class="line"></div>
+            
+            <p><br>Listen to the latest episode!<br>Next on 14/09/26 (Monday).</p>
 
         </section>
     </main>
+    
+    <!-- Native Audio Player -->
+<audio id="radioPlayer" loop preload="auto">
+    <source src="https://okafm.com/test/nuvve.mp3" type="audio/mpeg">
+</audio>
 
+<!-- Bottom Player Controls -->
+<div class="player-controls">
+
+    <!-- Rewind 15 seconds -->
+    <button class="player-btn" id="rewindBtn" aria-label="Rewind 15 seconds">
+        <i class="fa-solid fa-backward"></i>
+    </button>
+
+    <!-- Play / Pause -->
+    <button class="player-btn play-btn" id="playBtn" aria-label="Play">
+        <i class="fa-solid fa-play"></i>
+    </button>
+
+    <!-- Forward 15 seconds -->
+    <button class="player-btn" id="forwardBtn" aria-label="Forward 15 seconds">
+        <i class="fa-solid fa-forward"></i>
+    </button>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* Initialize native audio */
+    const audio = document.getElementById('radioPlayer');
+
+    const playBtn = document.getElementById('playBtn');
+    const rewindBtn = document.getElementById('rewindBtn');
+    const forwardBtn = document.getElementById('forwardBtn');
+
+    /* Play / Pause */
+
+    async function togglePlay() {
+
+        if (audio.paused) {
+            try {
+                await audio.play();
+            } catch (error) {
+                console.error('Audio could not play:', error);
+            }
+        } else {
+            audio.pause();
+        }
+
+    }
+
+    playBtn.addEventListener('click', togglePlay);
+
+
+    /* Rewind 15 seconds */
+
+    function rewind15() {
+
+        audio.currentTime = Math.max(
+            0,
+            audio.currentTime - 15
+        );
+
+    }
+
+
+    /* Forward 15 seconds */
+
+    function forward15() {
+
+        const duration = audio.duration;
+
+        audio.currentTime = isFinite(duration)
+            ? Math.min(duration, audio.currentTime + 15)
+            : audio.currentTime + 15;
+
+    }
+
+
+    /* Connect webpage buttons */
+
+    rewindBtn.addEventListener('click', rewind15);
+    forwardBtn.addEventListener('click', forward15);
+
+
+    /* Keep Play/Pause icon synced with ACTUAL audio state */
+
+    function updatePlayIcon() {
+
+        if (audio.paused) {
+            playBtn.innerHTML =
+                '<i class="fa-solid fa-play"></i>';
+
+            playBtn.setAttribute('aria-label', 'Play');
+
+        } else {
+            playBtn.innerHTML =
+                '<i class="fa-solid fa-pause"></i>';
+
+            playBtn.setAttribute('aria-label', 'Pause');
+        }
+
+    }
+
+    audio.addEventListener('play', updatePlayIcon);
+    audio.addEventListener('pause', updatePlayIcon);
+    audio.addEventListener('ended', updatePlayIcon);
+    
+    /* Set initial icon */
+    updatePlayIcon();
+
+
+    /* Media Session / Lock Screen / Notification Controls */
+
+    if ('mediaSession' in navigator) {
+        
+        navigator.mediaSession.metadata = new MediaMetadata({
+        title: 'Bandar FM',
+        artist: 'Machilipatnam',
+        album: 'Web Radio',
+        artwork: [{ src: 'logo-512.png', sizes: '512x512', type: 'image/png' }]
+        });
+
+        navigator.mediaSession.setActionHandler('play', async () => {
+            try {
+                await audio.play();
+            } catch (error) {
+                console.error('Media Session play failed:', error);
+            }
+        });
+
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+            audio.pause();
+        });
+
+
+        /* Lock screen / notification rewind = 15 seconds */
+        navigator.mediaSession.setActionHandler(
+            'seekbackward',
+            (details) => {
+
+                const seconds = 15;
+
+                audio.currentTime = Math.max(
+                    0,
+                    audio.currentTime - seconds
+                );
+            }
+        );
+
+
+        /* Lock screen / notification forward = 15 seconds */
+        navigator.mediaSession.setActionHandler(
+            'seekforward',
+            (details) => {
+
+                const seconds = 15;
+
+                const duration = audio.duration;
+
+                audio.currentTime = isFinite(duration)
+                    ? Math.min(
+                        duration,
+                        audio.currentTime + seconds
+                    )
+                    : audio.currentTime + seconds;
+            }
+        );
+        
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            rewind15();
+        });
+
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            forward15();
+        });
+
+
+        /* Sync Media Session playback state */
+
+        audio.addEventListener('play', () => {
+            navigator.mediaSession.playbackState = 'playing';
+        });
+
+        audio.addEventListener('pause', () => {
+            navigator.mediaSession.playbackState = 'paused';
+        });
+
+    }
+
+});
+</script>
+    
 </body>
 </html>
