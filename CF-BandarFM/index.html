@@ -226,8 +226,8 @@
             z-index: 20;
 
             display: grid;
-            grid-template-columns: 50px 50px 50px;
-            column-gap: 22px;
+            grid-template-columns: 50px 50px 50px 50px 50px;
+            column-gap: 20px;
 
             justify-items: center;
             align-items: center;
@@ -261,18 +261,29 @@
         }
 
         /* Top row */
-        #rewindBtn {
+        
+        #reloadBtn {
             grid-column: 1;
             grid-row: 1;
         }
-
-        #playBtn {
+        
+        #rewindBtn {
             grid-column: 2;
             grid-row: 1;
         }
 
-        #forwardBtn {
+        #playBtn {
             grid-column: 3;
+            grid-row: 1;
+        }
+
+        #forwardBtn {
+            grid-column: 4;
+            grid-row: 1;
+        }
+        
+        #shareBtn {
+            grid-column: 5;
             grid-row: 1;
         }
         
@@ -320,6 +331,11 @@
 
 <!-- Bottom Player Controls -->
 <div class="player-controls">
+    
+    <!-- Reload / Restart -->
+    <button class="player-btn" id="reloadBtn" aria-label="Restart">
+        <i class="fa-solid fa-rotate-right"></i>
+    </button>
 
     <!-- Rewind 15 seconds -->
     <button class="player-btn" id="rewindBtn" aria-label="Rewind 15 seconds">
@@ -335,6 +351,11 @@
     <button class="player-btn" id="forwardBtn" aria-label="Forward 15 seconds">
         <i class="fa-solid fa-forward"></i>
     </button>
+    
+    <!-- Share -->
+    <button class="player-btn" id="shareBtn" aria-label="Share">
+        <i class="fa-solid fa-share-nodes"></i>
+    </button>
 
 </div>
 
@@ -344,9 +365,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Initialize native audio */
     const audio = document.getElementById('radioPlayer');
 
+    const reloadBtn = document.getElementById('reloadBtn');
     const playBtn = document.getElementById('playBtn');
     const rewindBtn = document.getElementById('rewindBtn');
     const forwardBtn = document.getElementById('forwardBtn');
+    const shareBtn = document.getElementById('shareBtn');
 
     /* Play / Pause */
 
@@ -393,10 +416,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     /* Connect webpage buttons */
-
+    
+    reloadBtn.addEventListener('click', reloadAudio);
     rewindBtn.addEventListener('click', rewind15);
     forwardBtn.addEventListener('click', forward15);
-
+    shareBtn.addEventListener('click', sharePage);
+    
 
     /* Keep Play/Pause icon synced with ACTUAL audio state */
 
@@ -512,8 +537,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     }
+    
+    function reloadAudio() {
+    audio.currentTime = 0;
+    audio.play();
+}
+    
+    async function sharePage() {
+
+        const shareData = {
+            title: 'Bandar FM',
+            text: 'Listen to Bandar FM',
+            url: 'https://bandarfm.com'
+        };
+
+        try {
+
+            // Use native Web Share API if available
+            if (navigator.share) {
+                await navigator.share(shareData);
+                return;
+            }
+
+            // Fallback: copy link
+            await navigator.clipboard.writeText(shareData.url);
+            alert('Link copied');
+
+        } catch (error) {
+
+            // If native sharing failed, try clipboard
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                alert('Link copied');
+            } catch (clipboardError) {
+                console.error('Share and clipboard failed:', clipboardError);
+            }
+
+        }
+    }
 
 });
+    
 </script>
     
 </body>
