@@ -502,11 +502,13 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.addEventListener('error', () => {
         audio.pause();
         updatePlayIcon();
+        alert("Something went wrong. Please check your internet connection and try again.");
     });
 
     audio.addEventListener('stalled', () => {
         audio.pause();
         updatePlayIcon();
+        alert("Something went wrong. Please check your internet connection and try again.");
     });
 
     audio.addEventListener('playing', updatePlayIcon);
