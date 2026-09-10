@@ -498,6 +498,16 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.addEventListener('waiting', () => {
         playBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
     });
+    
+    audio.addEventListener('error', () => {
+        audio.pause();
+        updatePlayIcon();
+    });
+
+    audio.addEventListener('stalled', () => {
+        audio.pause();
+        updatePlayIcon();
+    });
 
     audio.addEventListener('playing', updatePlayIcon);
     audio.addEventListener('play', updatePlayIcon);
