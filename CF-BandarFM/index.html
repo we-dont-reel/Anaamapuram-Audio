@@ -308,7 +308,7 @@
 
             <div class="line"></div>
             
-            <p><br>Listen to the latest episode!<br>Next on 14/09/26 (Monday).</p>
+            <p><br>Listen to the latest episode!<br>Next on 14/09/26 (Monday)</p>
 
         </section>
     </main>
@@ -416,7 +416,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
     }
+    
+    audio.addEventListener('waiting', () => {
+        playBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+    });
 
+    audio.addEventListener('playing', updatePlayIcon);
     audio.addEventListener('play', updatePlayIcon);
     audio.addEventListener('pause', updatePlayIcon);
     audio.addEventListener('ended', updatePlayIcon);
