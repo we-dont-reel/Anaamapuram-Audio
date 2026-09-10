@@ -9,6 +9,7 @@
     <meta name="description" content="The first web FM in Machilipatnam (Bandar). Start listening and enjoy! Pure entertainment...">
     <meta name="google" content="notranslate">
     <link rel="icon" type="image/png" href="logo-512.png">
+    <link rel="manifest" href="manifest.json">
     <meta name="keywords" content="Bandar FM, BandarFM, Bandar Radio">
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="Bandar FM">
@@ -287,10 +288,62 @@
             grid-row: 1;
         }
         
+        .install-banner {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+
+            display: none;
+            align-items: center;
+
+            height: 30px;
+
+            background: transparent;
+            color: #fff;
+
+            white-space: nowrap;
+        }
+
+    .install-banner span {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+    .install-banner button {
+            height: 30px;
+            margin-left: 8px;
+            padding: 0 11px;
+
+            border: none;
+            border-radius: 999px;
+
+            background: #fff;
+            color: #111;
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            -webkit-tap-highlight-color: transparent;
+            tap-highlight-color: transparent;
+        }
+
+    .install-banner button:focus {
+            outline: none;
+        }
+
     </style>
 </head>
 
 <body>
+    
+    <div id="installBanner" class="install-banner">
+        <span>You can install this now!</span>
+        <button id="installBtn" type="button">Install</button>
+    </div>
 
     <!-- Creative radio-wave background -->
     <div class="background" aria-hidden="true">
@@ -573,6 +626,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         }
+    }
+    
+    let deferredInstallPrompt = null;
+
+    const installBanner = document.getElementById('installBanner');
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+
+        deferredInstallPrompt = event;
+
+        installBanner.style.display = 'flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+        if (!deferredInstallPrompt) {
+            return;
+        }
+
+        deferredInstallPrompt.prompt();
+
+        try {
+            await deferredInstallPrompt.userChoice;
+        } catch (error) {
+            console.error('Install prompt failed:', error);
+        }
+
+        deferredInstallPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+        installBanner.style.display = 'none';
+        deferredInstallPrompt = null;
+    });
+
+
+    /* Service Worker */
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
     }
 
 });
