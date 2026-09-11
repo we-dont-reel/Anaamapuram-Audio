@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (currentIndex <= 0) {
-            return;
+            currentIndex = songStarts.length;
         }
 
         const [minutes, seconds] = songStarts[currentIndex - 1].split(':').map(Number);
