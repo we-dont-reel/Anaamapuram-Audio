@@ -372,14 +372,14 @@
 
             <div class="line"></div>
             
-            <p><br>Listen to the latest episode!<br>Next on 14/09/26 (Monday)</p>
+            <p><br>Listen to the latest episode!<br>Next on 20/09/26 (Sunday)</p>
 
         </section>
     </main>
     
     <!-- Native Audio Player -->
 <audio id="radioPlayer" loop preload="auto">
-    <source src="https://okafm.com/test/nuvve.mp3" type="audio/mpeg">
+    <source src="https://okafm.com/prod/e1.mp3" type="audio/mpeg">
 </audio>
 
 <!-- Bottom Player Controls -->
@@ -387,7 +387,7 @@
     
     <!-- Reload / Restart -->
     <button class="player-btn" id="reloadBtn" aria-label="Restart">
-        <i class="fa-solid fa-rotate-right"></i>
+        <i class="fa-solid fa-rotate-left"></i>
     </button>
 
     <!-- Rewind 15 seconds -->
@@ -611,9 +611,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function reloadAudio() {
-    audio.currentTime = 0;
-    audio.play();
-}
+            const songStarts = [
+            "0:00",
+            "2:51",
+            "6:40",
+            "10:52",
+            "14:34",
+            "19:27",
+            "24:31",
+            "28:41"
+        ];
+
+        const currentTime = audio.currentTime;
+
+        if (!isFinite(currentTime) || currentTime < 0) {
+            return;
+        }
+
+        let currentIndex = -1;
+
+        for (let i = 0; i < songStarts.length; i++) {
+            const [minutes, seconds] = songStarts[i].split(':').map(Number);
+            const timestamp = minutes * 60 + seconds;
+
+            if (timestamp < currentTime) {
+                currentIndex = i;
+            }
+        }
+
+        if (currentIndex <= 0) {
+            return;
+        }
+
+        const [minutes, seconds] = songStarts[currentIndex - 1].split(':').map(Number);
+        const previousStart = minutes * 60 + seconds;
+
+        audio.currentTime = Math.max(0, previousStart - 1);
+        audio.play();
+        }
     
     async function sharePage() {
 
