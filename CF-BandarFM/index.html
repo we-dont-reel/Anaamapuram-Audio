@@ -379,7 +379,7 @@
     
     <!-- Native Audio Player -->
 <audio id="radioPlayer" loop preload="auto">
-    <source src="https://okafm.com/prod/e1.mp3" type="audio/mpeg">
+    <source src="https://okafm.com/prod/e4.mp3" type="audio/mpeg">
 </audio>
 
 <!-- Bottom Player Controls -->
@@ -387,7 +387,7 @@
     
     <!-- Reload / Restart -->
     <button class="player-btn" id="reloadBtn" aria-label="Restart">
-        <i class="fa-solid fa-left-right"></i>
+        <i class="fa-solid fa-right-left"></i>
     </button>
 
     <!-- Rewind 15 seconds -->
@@ -613,14 +613,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function reloadAudio() {
             const songStarts = [
             "0:00",
-            "2:51",
-            "6:40",
-            "10:52",
-            "14:34",
-            "19:27",
-            "24:31",
-            "28:41"
-        ];
+            "4:43",
+            "49:60"
+            ];
 
         const currentTime = audio.currentTime;
 
@@ -639,12 +634,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (currentIndex <= 0) {
-            currentIndex = songStarts.length;
+        if (currentIndex >= songStarts.length - 1) {
+            currentIndex = -1;
         }
 
-        const [minutes, seconds] = songStarts[currentIndex - 1].split(':').map(Number);
-        const previousStart = minutes * 60 + seconds;
+        const parts = songStarts[currentIndex + 1].split(':').map(Number);
+        const previousStart = parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1];
 
         audio.currentTime = Math.max(0, previousStart - 1);
         audio.play();
