@@ -443,6 +443,13 @@
 </div>
 
 <script>
+    
+window.trackTimestamps = [
+                { time: "0:00", creditText: "Dr. G. Tejaswi", creditLink: "https://www.facebook.com/tejaswi.guthikonda" },
+                { time: "4:42", creditText: "YouTube\nJayasindoor Entertainments", creditLink: "https://www.youtube.com/watch?v=pd4ScE39LL4" },
+                { time: "49:59", creditText: "YouTube\nMRT Music", creditLink: "https://www.youtube.com/watch?v=Z4xjFRt1ssI" }
+            ];
+    
 document.addEventListener('DOMContentLoaded', () => {
 
     /* Initialize native audio */
@@ -504,6 +511,8 @@ document.addEventListener('DOMContentLoaded', () => {
     rewindBtn.addEventListener('click', rewind15);
     forwardBtn.addEventListener('click', forward15);
     shareBtn.addEventListener('click', sharePage);
+    const creditsBtn = document.querySelector('.credits-button');
+    creditsBtn.addEventListener('click', showCredits);
     
 
     /* Keep Play/Pause icon synced with ACTUAL audio state */
@@ -641,11 +650,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function reloadAudio() {
-            const songStarts = [
-            "0:00",
-            "4:42",
-            "49:59"
-            ];
+    
+        const songStarts = window.trackTimestamps.map(track => track.time);
 
         const currentTime = audio.currentTime;
 
@@ -746,6 +752,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/sw.js');
+    }
+    
+    function showCredits() {
+        const tracks = window.trackTimestamps;
+        const songStarts = tracks.map(track => track.time);
+        const currentTime = audio.currentTime;
+
+        let currentIndex = -1;
+
+        for (let i = 0; i < songStarts.length; i++) {
+            const parts = songStarts[i].split(':').map(Number);
+            const timestamp = parts.length === 3
+                ? parts[0] * 3600 + parts[1] * 60 + parts[2]
+                : parts[0] * 60 + parts[1];
+
+            if (timestamp <= currentTime) {
+                currentIndex = i;
+            }
+        }
+
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+
+        const currentTrack = tracks[currentIndex];
+
+        if (!currentTrack.creditText) {
+            alert("No credits associated with the current track.");
+            return;
+        }
+
+        const creditText = "Current track credit(s):\n" + currentTrack.creditText;
+
+        if (!currentTrack.creditLink) {
+            alert(creditText);
+            return;
+        }
+
+        if (window.confirm(creditText + "\n\nThis will take you to the original content or creator's profile.")) {
+            window.open(currentTrack.creditLink, '_blank');
+        }
     }
 
 });
