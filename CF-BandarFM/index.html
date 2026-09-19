@@ -457,7 +457,7 @@
 
             <div class="line"></div>
             
-            <p><br>Listen to the latest episode!<br>Next on 20/09/26 (Sunday)</p>
+            <p><br>Listen to the latest episode!<br>Next on 27/09/26 (Sunday)</p>
             
             <button class="credits-button">Credits</button>
 
@@ -466,7 +466,7 @@
     
     <!-- Native Audio Player -->
 <audio id="radioPlayer" loop preload="auto">
-    <source src="https://okafm.com/prod/e4.mp3" type="audio/mpeg">
+    <source src="https://okafm.com/prod/e5.mp3" type="audio/mpeg">
 </audio>
 
 <!-- Bottom Player Controls -->
@@ -521,9 +521,16 @@
 <script>
     
 window.trackTimestamps = [
-                { time: "0:00", creditText: "Dr. G. Tejaswi", creditLink: "https://www.facebook.com/tejaswi.guthikonda" },
-                { time: "4:42", creditText: "YouTube\nJayasindoor Entertainments", creditLink: "https://www.youtube.com/watch?v=pd4ScE39LL4" },
-                { time: "49:59", creditText: "YouTube\nMRT Music", creditLink: "https://www.youtube.com/watch?v=Z4xjFRt1ssI" }
+                { time: "0:00", creditText: "(Research and Writer)\nSri Savaram Venkateswara Rao,\nRetd. Professor,\nThe Hindu College, MTM", creditLink: "" },
+		        { time: "10:25", creditText: "Dr. G. Tejaswi", creditLink: "https://www.facebook.com/tejaswi.guthikonda" },
+                { time: "15:13", creditText: "YouTube\nJayasindoor Entertainments", creditLink: "https://www.youtube.com/watch?v=pd4ScE39LL4" },
+                { time: "1:00:14", creditText: "YouTube\nMRT Music", creditLink: "https://www.youtube.com/watch?v=Z4xjFRt1ssI" },
+                { time: "1:03:30", creditText: "Bandar FM\n(bandarfm.com)", creditLink: "" },
+                { time: "1:06:24", creditText: "Bandar FM\n(bandarfm.com)", creditLink: "" },
+                { time: "1:10:21", creditText: "Bandar FM\n(bandarfm.com)", creditLink: "" },
+                { time: "1:14:16", creditText: "Bandar FM\n(bandarfm.com)", creditLink: "" },
+                { time: "1:18:39", creditText: "Bandar FM\n(bandarfm.com)", creditLink: "" }
+
             ];
     
 document.addEventListener('DOMContentLoaded', () => {
@@ -746,8 +753,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentIndex = -1;
 
         for (let i = 0; i < songStarts.length; i++) {
-            const [minutes, seconds] = songStarts[i].split(':').map(Number);
-            const timestamp = minutes * 60 + seconds;
+            const parts = songStarts[i].split(':').map(Number);
+            const timestamp = parts.length === 3 
+                ? parts[0] * 3600 + parts[1] * 60 + parts[2] 
+                : parts[0] * 60 + parts[1];
 
             if (timestamp < currentTime) {
                 currentIndex = i;
